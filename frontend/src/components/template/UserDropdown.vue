@@ -8,12 +8,12 @@
             <i class="fa fa-angle-down"></i>
         </div>
         <div class="user-dropdown-content">
-            <a href>
-                <i class="fa fa-cogs">Administração</i>
-            </a>
-            <a href>
-                <i class="fa fa-sign-out">Sair</i>
-            </a>
+            <router-link to="/admin">
+                <i class="fa fa-cogs">&nbsp;Administração</i>
+            </router-link>
+            <router-link to="/">
+                <i class="fa fa-sign-out">&nbsp;Sair</i>
+            </router-link>
         </div>
     </div>
 </template>
@@ -72,6 +72,7 @@ export default {
         visibility: hidden;
         opacity: 0;
         transition: visibility 0s, opacity 0.5s, linear;
+        width: 100%;
     }
 
     .user-dropdown:hover .user-dropdown-content{
