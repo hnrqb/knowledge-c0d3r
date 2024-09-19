@@ -21,9 +21,14 @@ module.exports = app => {
 
             existsOrError(user.name, 'Nome não informado')
             existsOrError(user.email, 'Email não informado')
-            existsOrError(user.password, 'Senha não informada')
-            existsOrError(user.confirm_password, 'Confirmação de Senha ou Senha Inválida')
-            equalsOrError(user.password, user.confirm_password, 'Senhas não conferem')
+
+            if ((user.method === 'post') ||
+                ((user.method === 'put') && (user.password || user.confirm_password))
+            ) { 
+                existsOrError(user.password, 'Senha não informada')
+                existsOrError(user.confirm_password, 'Confirmação de Senha ou Senha Inválida')
+                equalsOrError(user.password, user.confirm_password, 'Senhas não conferem')
+            }
 
             const userFromDB = await app.database('users')
                 .where({ email: user.email })
@@ -32,12 +37,14 @@ module.exports = app => {
             if (!user.id) {
                 notExistsOrError(userFromDB, 'Usuário já cadastrado')
             }
-
+            user.password = user.password ?
+                encryptPassword(user.password) :
+                `${userFromDB.password}`
         } catch (msg) {
             return res.status(400).send(msg)
         }
 
-        user.password = encryptPassword(user.password)
+        delete user.method
         delete user.confirm_password
 
         if (user.id) {
@@ -66,8 +73,9 @@ module.exports = app => {
         app.database('users')
             .select('id', 'name', 'email', 'admin')
             .whereNull('deleted_at')
-            .limit(pagination_limit).offset(page * pagination_limit - pagination_limit)
-            .then(users => res.json({ data: users, count, pagination_limit}))
+            // .limit(pagination_limit).offset(page * pagination_limit - pagination_limit)
+            // .then(users => res.json({ data: users, count, pagination_limit}))
+            .then(users => res.json(users))
             .catch(err => res.status(500).send(err))
     }
 

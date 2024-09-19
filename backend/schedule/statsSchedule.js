@@ -2,9 +2,12 @@ const schedule = require('node-schedule')
 
 module.exports = app => {
     schedule.scheduleJob('*/1 * * * *', async function () {
-        const usersCount = await app.database('users').count('id').first()
-        const categoriesCount = await app.database('categories').count('id').first()
-        const articlesCount = await app.database('articles').count('id').first()
+        const usersCount = await app.database('users')
+            .whereNull('deleted_at').count('id').first()
+        const categoriesCount = await app.database('categories')
+            .count('id').first()
+        const articlesCount = await app.database('articles')
+            .count('id').first()
 
         const { Stat } = app.api.stat
 
