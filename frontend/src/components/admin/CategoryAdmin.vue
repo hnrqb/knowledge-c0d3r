@@ -14,7 +14,7 @@
                 <b-col md="4" sm="12">        
                     <b-form-group label="Categoria Pai:" label-for="category-parent-id">
                         <b-form-select id="category-parent-id" :disabled="mode === 'remove'"
-                            :options="categories" v-model="category.parent_id">
+                            :options="filteredCategories" v-model="category.parent_id">
                         </b-form-select>
                     </b-form-group>
                 </b-col>
@@ -94,6 +94,12 @@ export default {
         loadCategory(category, mode = 'save') {
             this.mode = mode
             this.category = { ...category, value: category.parent_id, text: category.path }
+        }
+    },
+    computed: {
+        filteredCategories() {
+            return this.categories
+                .filter(cat => cat.id !== this.category.id);
         }
     },
     mounted() {
