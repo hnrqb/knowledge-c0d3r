@@ -3,9 +3,8 @@ module.exports = app => {
 
     const save = (req, res) => {
         const category = {
-            id: req.body.id,
             name: req.body.name,
-            parent_id: req.body.parent_id
+            parent_id: req.body.id !== req.body.parent_id ? req.body.parent_id : null
         }
         
         if (req.params.id) category.id = req.params.id
