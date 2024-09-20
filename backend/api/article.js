@@ -35,9 +35,7 @@ module.exports = app => {
     }
 
     const remove = async (req, res) => {
-        
         try {
-            
             const article_id = parseInt(req.params.id) || req.params.id
             
             try {
@@ -61,11 +59,9 @@ module.exports = app => {
         }
     }
 
-    const pagination_limit = 10
-
+    const pagination_limit = 4
     const get = async (req, res) => {
-
-        const page = 1
+        const page = req.query.page || 1
 
         const result = await app.database('articles').count('id').first()
         const count = parseInt(result.count)
@@ -73,7 +69,7 @@ module.exports = app => {
         app.database('articles')
             .select('id', 'name', 'description')
             .limit(pagination_limit).offset(page * pagination_limit - pagination_limit)
-            .then(articles => res.json({ data: articles, count, pagination_limit}))
+            .then(articles => res.json({ articles: articles, count, pagination_limit }))
             .catch(err => res.status(500).send(err))
     }
 
