@@ -6,6 +6,9 @@
         <div class="admin-pages-tabs" ref="pageTop">
             <b-card no-body>
                 <b-tabs card>
+                    <b-tab title="Artigos"> 
+                        <ArticleAdmin></ArticleAdmin>
+                    </b-tab>
                     <b-tab title="Categorias"> 
                         <CategoryAdmin></CategoryAdmin>
                     </b-tab>
@@ -20,11 +23,12 @@
 
 <script>
 import PageTitle from '../template/PageTitle'
+import ArticleAdmin from './ArticleAdmin'
 import CategoryAdmin from './CategoryAdmin'
 import UserAdmin from './UserAdmin'
 
 export default {
     name: 'AdminPages',
-    components: { PageTitle, CategoryAdmin, UserAdmin }
+    components: { PageTitle, ArticleAdmin, CategoryAdmin, UserAdmin }
 }
 </script>
