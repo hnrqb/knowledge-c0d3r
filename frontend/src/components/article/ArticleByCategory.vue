@@ -44,9 +44,24 @@ export default {
                 this.articles = this.articles.concat(res.data)
                 this.page++
 
-                console.log(res.data);
-                if(res.data.length === 0) this.loadMore = false
+                if(res.data.length === 0) {
+                    this.loadMore = false
+                    this.$toasted.global.defaultInfo({
+                        msg: 'Você está vendo todos os artigos desta categoria.'
+                    })
+                } 
             })
+        }
+    },
+    watch: {
+        $route(to) {
+            this.category.id = to.params.id
+            this.articles = []
+            this.page = 1
+            this.loadMore = true
+
+            this.getCategory()
+            this.getArticles()
         }
     },
     mounted() {
@@ -69,5 +84,4 @@ export default {
         align-items: center;
         margin-top: 25px;
     }
-
 </style>
