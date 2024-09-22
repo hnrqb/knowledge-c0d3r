@@ -40,24 +40,24 @@ export default {
 
 			if (!userData) {
 				this.validatingToken = false
-				this.$router.push({ name: '/auth' })
-				return 
+				this.$router.push({ name: 'auth' })
+				return
 			}
-			
-			const res = await axios.post(`${baseApiUrl}/validateToken`, userData)
+
+			const res = await axios.post(`${baseApiUrl}/validate-token`, userData)
 
 			if (res.data) {
 				this.$store.commit('setUser', userData)
 			} else {
 				localStorage.removeItem(userKey)
-				this.$router.push({ name: '/auth' })
+				this.$router.push({ name: 'auth' })
 			}
 
 			this.validatingToken = false
 		},
-		created() {
-			this.validateToken()
-		}
+	},
+	created() {
+		this.validateToken()
 	}
 }
 </script>
