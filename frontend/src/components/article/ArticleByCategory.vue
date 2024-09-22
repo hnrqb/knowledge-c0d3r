@@ -39,18 +39,30 @@ export default {
             axios(url).then(res => this.category = res.data)
         },
         getArticles() {
-            const url = `${baseApiUrl}/categories/${this.category.id}/articles?page=${this.page}`
+            const url = `${baseApiUrl}/categories/${this.category.id}/articles?page=${this.page}`;
+            
             axios(url).then(res => {
-                this.articles = this.articles.concat(res.data)
-                this.page++
+                const articles = res.data;
+                this.articles = this.articles.concat(articles);
 
-                if(res.data.length === 0) {
-                    this.loadMore = false
-                    this.$toasted.global.defaultInfo({
-                        msg: 'Você está vendo todos os artigos desta categoria.'
-                    })
-                } 
+                const isFirstPage = this.page === 1;
+                const hasNoArticles = articles.length === 0;
+
+                if (hasNoArticles) {
+                    this.loadMore = false;
+                    const message = isFirstPage
+                        ? 'Nenhum artigo cadastrado nesta categoria.'
+                        : 'Você está vendo todos os artigos desta categoria.';
+                    this.$toasted.global.defaultInfo({ msg: message });
+                }
+
+                if (articles.length > 0) {
+                    this.page++;
+                }
             })
+            .catch(error => {
+                this.$toasted.global.defaultError({ msg: 'Erro ao buscar artigos. Tente novamente mais tarde.' });
+            });
         }
     },
     watch: {
