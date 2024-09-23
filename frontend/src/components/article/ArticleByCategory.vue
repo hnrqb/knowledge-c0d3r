@@ -60,7 +60,7 @@ export default {
                     this.page++;
                 }
             })
-            .catch(error => {
+            .catch(() => {
                 this.$toasted.global.defaultError({ msg: 'Erro ao buscar artigos. Tente novamente mais tarde.' });
             });
         }
