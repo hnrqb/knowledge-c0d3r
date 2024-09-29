@@ -62,20 +62,17 @@ module.exports = app => {
         }
     }
 
-    const pagination_limit = 10
-    const get = (req, res) => {
+    const pagination_limit = 5
+    const get = async (req, res) => {
+        const page = req.query.page || 1
 
-        const page = 1
-
-        const result = app.database('users').count('id').first()
+        const result = await app.database('users').count('id').first()
         const count = parseInt(result.count)
 
         app.database('users')
             .select('id', 'name', 'email', 'admin')
-            .whereNull('deleted_at')
-            // .limit(pagination_limit).offset(page * pagination_limit - pagination_limit)
-            // .then(users => res.json({ data: users, count, pagination_limit}))
-            .then(users => res.json(users))
+            .limit(pagination_limit).offset(page * pagination_limit - pagination_limit)
+            .then(users => res.json({ users: users, count, pagination_limit }))
             .catch(err => res.status(500).send(err))
     }
 

@@ -1,6 +1,6 @@
 <template>
     <div class="category-admin">
-        <b-form>
+        <b-form ref="categoryForm">
             <input id="category-id" type="hidden" v-model="category.id" />
             <b-row>
                 <b-col md="8" sm="12">
@@ -36,6 +36,9 @@
                 </b-button>
             </template>
         </b-table>
+        <b-pagination size="md" v-model="page" :total-rows="count" 
+            :per-page="limit">
+        </b-pagination>
     </div>
 </template>
 
@@ -55,16 +58,21 @@ export default {
                 { key: 'name', label: 'Nome', sortable: true },
                 { key: 'path', label: 'Caminho', sortable: true },
                 { key: 'actions', label: 'Ações' }
-            ]
+            ],
+            page: 1,
+            count: 0,
+            limit: 0,
         }
     },
     methods: {
         loadCategories() {
-            const url = `${baseApiUrl}/categories`
-            axios.get(url).then(res => {
-                this.categories = res.data.map(category => {
+            const url = `${baseApiUrl}/categories?page=${this.page}`
+            axios(url).then(res => {
+                this.categories = res.data.categories.map(category => {
                     return { ...category, value: category.id, text: category.path }
                 })
+                this.count = res.data.count
+                this.limit = res.data.pagination_limit
             })
         },
         reset() {
@@ -94,6 +102,26 @@ export default {
         loadCategory(category, mode = 'save') {
             this.mode = mode
             this.category = { ...category, value: category.parent_id, text: category.path }
+            this.moveToForm()
+            if (this.isRemoveMode()) {
+                this.showRemoveConfirmationMessage()
+            }
+        },
+        moveToForm() {
+            this.$nextTick(() => {
+                this.$refs.categoryForm.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                })
+            })
+        },
+        isRemoveMode() {
+            return this.mode === 'remove';
+        },
+        showRemoveConfirmationMessage() {
+            this.$toasted.global.defaultInfo({
+                msg: 'Clique em Excluir pra confirmar a exclusão.'
+            })
         }
     },
     computed: {

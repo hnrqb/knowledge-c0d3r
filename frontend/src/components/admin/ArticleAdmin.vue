@@ -1,6 +1,6 @@
 <template>
     <div class="article-admin">
-        <b-form>
+        <b-form ref="articleForm">
             <input id="article-id" type="hidden" v-model="article.id" />
             <b-row>
                 <b-col md="6" sm="12">
@@ -109,7 +109,7 @@ export default {
         loadCategories() {
             const url = `${baseApiUrl}/categories`
             axios.get(url).then(res => {
-                this.categories = res.data.map(category => {
+                this.categories = res.data.categories.map(category => {
                     return { value: category.id, text: category.path }
                 })
             })
@@ -117,7 +117,7 @@ export default {
         loadUsers() {
             const url = `${baseApiUrl}/users`
             axios.get(url).then(res => {
-                this.users = res.data.map(user => {
+                this.users = res.data.users.map(user => {
                     return { value: user.id, text: `${user.name} (${user.email})` }
                 })
             })
@@ -150,6 +150,26 @@ export default {
             this.mode = mode
             const url = `${baseApiUrl}/articles/${article.id}`
             axios.get(url).then(res => this.article = res.data)
+            this.moveToForm()
+            if (this.isRemoveMode()) {
+                this.showRemoveConfirmationMessage()
+            }
+        },
+        moveToForm() {
+            this.$nextTick(() => {
+                this.$refs.articleForm.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                })
+            })
+        },
+        isRemoveMode() {
+            return this.mode === 'remove';
+        },
+        showRemoveConfirmationMessage() {
+            this.$toasted.global.defaultInfo({
+                msg: 'Clique em Excluir pra confirmar a exclusão.'
+            })
         }
     },
     watch: {

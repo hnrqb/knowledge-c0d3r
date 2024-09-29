@@ -64,6 +64,9 @@
                 </b-button>
             </template>
         </b-table>
+        <b-pagination size="md" v-model="page" :total-rows="count" 
+            :per-page="limit">
+        </b-pagination>
     </div>
 </template>
 
@@ -85,14 +88,19 @@ export default {
                 { key: 'admin', label: 'Administrador', sortable: true,
                     formatter: value => value ? 'Sim' : 'Não' },
                 { key: 'actions', label: 'Ações'}
-            ]
+            ],
+            page: 1,
+            count: 0,
+            limit: 0,
         }
     },
     methods: {
         loadUsers() {
-            const url = `${baseApiUrl}/users`
+            const url = `${baseApiUrl}/users?page=${this.page}`
             axios.get(url).then(res => {
-                this.users = res.data
+                this.users = res.data.users
+                this.count = res.data.count
+                this.limit = res.data.pagination_limit
             })
         },
         reset() {
@@ -142,8 +150,8 @@ export default {
         },
         showRemoveConfirmationMessage() {
             this.$toasted.global.defaultInfo({
-                msg: 'Clique em Excluir pra confimar a exclusão.'
-            })            
+                msg: 'Clique em Excluir pra confirmar a exclusão.'
+            })
         }
     },
     mounted() {

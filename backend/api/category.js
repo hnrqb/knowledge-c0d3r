@@ -85,9 +85,16 @@ module.exports = app => {
         return categoriesWithPath
     }
 
-    const get = (req, res) => {
+    const pagination_limit = 5
+    const get = async (req, res) => {
+        const page = req.query.page || 1
+
+        const result = await app.database('categories').count('id').first()
+        const count = parseInt(result.count)
+
         app.database('categories')
-            .then(categories => res.json(withPath(categories)))
+            .limit(pagination_limit).offset(page * pagination_limit - pagination_limit)
+            .then(categories => res.json({ categories: withPath(categories), count, pagination_limit }))
             .catch(err => res.status(500).send(err))
     }
 
